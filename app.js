@@ -1,7 +1,7 @@
 /* =========================================================
    설정 — 여기 두 값만 본인 환경에 맞게 바꾸면 됩니다.
    ========================================================= */
-const CLIENT_ID = '966666801240-6kao729ts6sicokuathc364vnult5agi.apps.googleusercontent.com' ; // 구글 클라우드 콘솔에서 발급받은 클라이언트 ID
+const CLIENT_ID = '966666801240-6kao729ts6sicokuathc364vnult5agi.apps.googleusercontent.com'; // 구글 클라우드 콘솔에서 발급받은 클라이언트 ID
 const FOLDER_NAME = 'Knowledge_Graph'; // 구글 드라이브 "내 드라이브"에 있는 폴더(또는 바로가기) 이름
 const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
 
@@ -56,8 +56,37 @@ function bindStaticEvents() {
     });
 
     document.getElementById('detail-back').addEventListener('click', () => {
-        showPanel('results-panel');
+        goBackFromDetail();
     });
+
+    // 엣지 스와이프로 뒤로가기 (상세 화면에서만 동작)
+    const EDGE_ZONE = 24;   // 왼쪽 가장자리 감지 폭(px)
+    const SWIPE_THRESHOLD = 80; // 뒤로가기로 인정할 최소 이동 거리(px)
+    let touchStartX = null;
+    let touchStartY = null;
+
+    document.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        if (t.clientX <= EDGE_ZONE) {
+            touchStartX = t.clientX;
+            touchStartY = t.clientY;
+        } else {
+            touchStartX = null;
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+        if (touchStartX === null) return;
+        const t = e.changedTouches[0];
+        const deltaX = t.clientX - touchStartX;
+        const deltaY = Math.abs(t.clientY - touchStartY);
+
+        const detailPanelActive = document.getElementById('detail-panel').classList.contains('active');
+        if (detailPanelActive && deltaX > SWIPE_THRESHOLD && deltaY < 60) {
+            goBackFromDetail();
+        }
+        touchStartX = null;
+    }, { passive: true });
 }
 
 function showLoginError(msg) {
@@ -336,6 +365,17 @@ function renderDetail(nodeId) {
 
 function getEndId(end) {
     return typeof end === 'object' ? end.id : end;
+}
+
+// 상세 화면에서 "전 단계"로 이동: 연관 노드를 눌러 들어온 경우 이전 노드로, 아니면 검색 결과로
+function goBackFromDetail() {
+    detailStack.pop(); // 현재 보고 있는 노드 제거
+    if (detailStack.length > 0) {
+        const prevId = detailStack[detailStack.length - 1];
+        renderDetail(prevId);
+    } else {
+        showPanel('results-panel');
+    }
 }
 
 function renderRelList(containerId, items) {
