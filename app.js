@@ -48,12 +48,12 @@ function bindStaticEvents() {
         showScreen('project-screen');
     });
 
+    let searchDebounceTimer = null;
     document.getElementById('search-input').addEventListener('input', (e) => {
-        if (e.isComposing) return;
-        runSearch(e.target.value);
-    });
-    document.getElementById('search-input').addEventListener('compositionend', (e) => {
-        runSearch(e.target.value);
+    showPanel('results-panel');
+    clearTimeout(searchDebounceTimer);
+    const value = e.target.value;
+    searchDebounceTimer = setTimeout(() => runSearch(value), 150);
     });
 
     document.getElementById('detail-back').addEventListener('click', () => {
