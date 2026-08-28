@@ -1,7 +1,7 @@
 /* =========================================================
    설정 — 여기 두 값만 본인 환경에 맞게 바꾸면 됩니다.
    ========================================================= */
-const CLIENT_ID = '966666801240-6kao729ts6sicokuathc364vnult5agi.apps.googleusercontent.com'; // 구글 클라우드 콘솔에서 발급받은 클라이언트 ID
+const CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com'; // 구글 클라우드 콘솔에서 발급받은 클라이언트 ID
 const FOLDER_NAME = 'Knowledge_Graph'; // 구글 드라이브 "내 드라이브"에 있는 폴더(또는 바로가기) 이름
 const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
 
@@ -307,7 +307,6 @@ function renderDetail(nodeId) {
     if (!node) return;
 
     document.getElementById('detail-title').textContent = node.id;
-    document.getElementById('detail-type').textContent = node.type || '';
     document.getElementById('detail-description').textContent = node.description || '(메모 없음)';
 
     const links = (currentProjectData.links || []).filter(l => !l.isDeleted);
