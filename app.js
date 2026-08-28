@@ -1,7 +1,7 @@
 /* =========================================================
    설정 — 여기 두 값만 본인 환경에 맞게 바꾸면 됩니다.
    ========================================================= */
-const CLIENT_ID = '966666801240-6kao729ts6sicokuathc364vnult5agi.apps.googleusercontent.com'; // 구글 클라우드 콘솔에서 발급받은 클라이언트 ID
+const CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com'; // 구글 클라우드 콘솔에서 발급받은 클라이언트 ID
 const FOLDER_NAME = 'Knowledge_Graph'; // 구글 드라이브 "내 드라이브"에 있는 폴더(또는 바로가기) 이름
 const SCOPES = 'https://www.googleapis.com/auth/drive.readonly';
 
@@ -50,10 +50,9 @@ function bindStaticEvents() {
 
     let searchDebounceTimer = null;
     document.getElementById('search-input').addEventListener('input', (e) => {
-    showPanel('results-panel');
-    clearTimeout(searchDebounceTimer);
-    const value = e.target.value;
-    searchDebounceTimer = setTimeout(() => runSearch(value), 150);
+        clearTimeout(searchDebounceTimer);
+        const value = e.target.value;
+        searchDebounceTimer = setTimeout(() => runSearch(value), 150);
     });
 
     document.getElementById('detail-back').addEventListener('click', () => {
@@ -260,27 +259,28 @@ function runSearch(rawQuery) {
 
     listEl.innerHTML = '';
     if (nameMatches.length > 0) {
-        appendResultGroup(listEl, '노드', nameMatches, query, false);
+        appendResultGroup(listEl, '노드', nameMatches, query);
     }
     if (memoMatches.length > 0) {
-        appendResultGroup(listEl, '상세 메모', memoMatches, query, true);
+        appendResultGroup(listEl, '상세 메모', memoMatches, query);
     }
 }
 
-function appendResultGroup(container, label, items, query, showSnippet) {
+function appendResultGroup(container, label, items, query) {
     const groupLabel = document.createElement('div');
     groupLabel.className = 'result-group-label';
     groupLabel.textContent = label;
     container.appendChild(groupLabel);
 
     items.forEach(node => {
+        const hasMemo = !!node.description;
         const item = document.createElement('div');
         item.className = 'result-item';
         let html = `<div class="r-name"></div>`;
-        if (showSnippet) html += `<div class="r-snippet"></div>`;
+        if (hasMemo) html += `<div class="r-snippet"></div>`;
         item.innerHTML = html;
         item.querySelector('.r-name').textContent = node.id;
-        if (showSnippet) {
+        if (hasMemo) {
             item.querySelector('.r-snippet').textContent = buildSnippet(node.description, query);
         }
         item.addEventListener('click', () => {
@@ -293,10 +293,15 @@ function appendResultGroup(container, label, items, query, showSnippet) {
 
 function buildSnippet(text, query) {
     if (!text) return '';
+    const maxLen = 80; // 2줄 분량 기준 (CSS line-clamp:2와 함께 동작)
     const idx = text.toLowerCase().indexOf(query.toLowerCase());
-    if (idx === -1) return text.slice(0, 80);
+    if (idx === -1) {
+        // 검색어가 설명에 없는 경우 (이름만 매칭된 노드) → 앞부분부터 표시
+        return text.length > maxLen ? text.slice(0, maxLen) + '…' : text;
+    }
     const start = Math.max(0, idx - 20);
-    return (start > 0 ? '…' : '') + text.slice(start, start + 100);
+    const end = start + maxLen;
+    return (start > 0 ? '…' : '') + text.slice(start, end) + (end < text.length ? '…' : '');
 }
 
 /* =========================================================
