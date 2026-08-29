@@ -42,13 +42,43 @@ function bindStaticEvents() {
     });
 
     document.getElementById('theme-toggle-1').addEventListener('click', toggleTheme);
-    document.getElementById('theme-toggle-2').addEventListener('click', toggleTheme);
+
+    document.getElementById('viewer-primary-action').innerHTML = ICON_ARROW_LEFT;
+    document.getElementById('viewer-primary-action').addEventListener('click', goBackFromDetail);
 
     let searchDebounceTimer = null;
     document.getElementById('search-input').addEventListener('input', (e) => {
         clearTimeout(searchDebounceTimer);
         const value = e.target.value;
         searchDebounceTimer = setTimeout(() => runSearch(value), 150);
+    });
+
+    // 햄버거 메뉴 (설정: 화면 모드 / 프로젝트 선택)
+    const menuToggleBtn = document.getElementById('menu-toggle-btn');
+    const settingsMenu = document.getElementById('settings-menu');
+    menuToggleBtn.innerHTML = ICON_HAMBURGER;
+    document.getElementById('menu-project-select').querySelector('.settings-menu-icon').innerHTML = ICON_FOLDER;
+
+    menuToggleBtn.addEventListener('click', () => {
+        const isOpen = settingsMenu.classList.toggle('open');
+        menuToggleBtn.setAttribute('aria-expanded', isOpen);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!settingsMenu.classList.contains('open')) return;
+        if (settingsMenu.contains(e.target) || menuToggleBtn.contains(e.target)) return;
+        settingsMenu.classList.remove('open');
+        menuToggleBtn.setAttribute('aria-expanded', 'false');
+    });
+
+    document.getElementById('menu-project-select').addEventListener('click', () => {
+        closeSettingsMenu();
+        showScreen('project-screen');
+    });
+
+    document.getElementById('menu-theme-toggle').addEventListener('click', () => {
+        toggleTheme();
+        closeSettingsMenu();
     });
 
     // 엣지 스와이프로 뒤로가기 (상세 화면에서만 동작)
@@ -98,24 +128,25 @@ function showPanel(id) {
 }
 
 /* =========================================================
-   뷰어 화면 하단 바 좌측 아이콘 전환
-   - 검색 결과 화면: 폴더 아이콘 → 프로젝트 목록으로
-   - 상세 화면: 화살표 아이콘 → 검색 결과로
+   아이콘 (인라인 SVG)
    ========================================================= */
 const ICON_FOLDER = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>';
 const ICON_ARROW_LEFT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>';
+const ICON_HAMBURGER = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>';
 
+/* =========================================================
+   뷰어 화면 하단 바 표시/숨김
+   - 검색 결과 화면: 하단 바 숨김 (설정은 햄버거 메뉴로 이동)
+   - 상세 화면: 화살표 아이콘(검색 결과로)만 표시
+   ========================================================= */
 function setViewerNav(mode) {
-    const btn = document.getElementById('viewer-primary-action');
-    if (mode === 'detail') {
-        btn.innerHTML = ICON_ARROW_LEFT;
-        btn.setAttribute('aria-label', '검색 결과로');
-        btn.onclick = goBackFromDetail;
-    } else {
-        btn.innerHTML = ICON_FOLDER;
-        btn.setAttribute('aria-label', '프로젝트 목록으로');
-        btn.onclick = () => showScreen('project-screen');
-    }
+    const bar = document.getElementById('viewer-bottom-bar');
+    bar.classList.toggle('active', mode === 'detail');
+}
+
+function closeSettingsMenu() {
+    document.getElementById('settings-menu').classList.remove('open');
+    document.getElementById('menu-toggle-btn').setAttribute('aria-expanded', 'false');
 }
 
 /* =========================================================
@@ -229,10 +260,11 @@ async function enterProjectScreen() {
    ========================================================= */
 async function openProject(fileId, title) {
     showScreen('viewer-screen');
-    document.getElementById('viewer-project-title').textContent = title;
+    document.getElementById('settings-menu-title').textContent = title;
     document.getElementById('search-input').value = '';
     showPanel('results-panel');
     setViewerNav('results');
+    closeSettingsMenu();
     document.getElementById('results-list').innerHTML = '<div class="loading-text">불러오는 중…</div>';
 
     try {

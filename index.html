@@ -37,6 +37,18 @@
   <div id="viewer-screen" class="screen">
     <div class="search-bar-wrap">
       <input id="search-input" class="search-input" type="text" placeholder="노드명 또는 메모 내용 검색" autocomplete="off" />
+      <button id="menu-toggle-btn" class="icon-btn" aria-label="설정 메뉴" aria-expanded="false"></button>
+    </div>
+    <div id="settings-menu" class="settings-menu">
+      <div id="settings-menu-title" class="settings-menu-title"></div>
+      <button id="menu-project-select" class="settings-menu-item">
+        <span class="settings-menu-icon"></span>
+        <span>프로젝트 선택</span>
+      </button>
+      <button id="menu-theme-toggle" class="settings-menu-item">
+        <span class="settings-menu-icon">◐</span>
+        <span>화면 모드</span>
+      </button>
     </div>
 
     <!-- 검색 결과 리스트 -->
@@ -64,10 +76,8 @@
       </div>
     </div>
 
-    <footer class="bottom-bar">
-      <button id="viewer-primary-action" class="icon-btn" aria-label="뒤로가기"></button>
-      <div class="bottom-bar-title" id="viewer-project-title">프로젝트</div>
-      <button id="theme-toggle-2" class="icon-btn" title="테마 전환">◐</button>
+    <footer id="viewer-bottom-bar" class="bottom-bar bottom-bar--icon-only">
+      <button id="viewer-primary-action" class="icon-btn" aria-label="검색 결과로"></button>
     </footer>
   </div>
 
