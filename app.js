@@ -53,6 +53,18 @@ function bindStaticEvents() {
         searchDebounceTimer = setTimeout(() => runSearch(value), 150);
     });
 
+    // 엔터 입력 시 항상 현재 검색어로 검색 결과 화면으로 전환 (상시 작동하는 검색창)
+    document.getElementById('search-input').addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        clearTimeout(searchDebounceTimer);
+        runSearch(e.target.value);
+        detailStack = [];
+        showPanel('results-panel');
+        setViewerNav('results');
+        e.target.blur(); // 모바일 키보드 닫기
+    });
+
     // 햄버거 메뉴 (설정: 화면 모드 / 프로젝트 선택)
     const menuToggleBtn = document.getElementById('menu-toggle-btn');
     const settingsMenu = document.getElementById('settings-menu');
