@@ -50,10 +50,16 @@ function bindStaticEvents() {
     document.getElementById('search-input').addEventListener('input', (e) => {
         clearTimeout(searchDebounceTimer);
         const value = e.target.value;
+        // 상세 화면 등 다른 화면에 있어도 타이핑 시 바로 검색 결과 화면으로 전환
+        if (!document.getElementById('results-panel').classList.contains('active')) {
+            detailStack = [];
+            showPanel('results-panel');
+            setViewerNav('results');
+        }
         searchDebounceTimer = setTimeout(() => runSearch(value), 150);
     });
 
-    // 엔터 입력 시 항상 현재 검색어로 검색 결과 화면으로 전환 (상시 작동하는 검색창)
+    // 엔터 입력 시 즉시 검색 실행 + 키보드 닫기
     document.getElementById('search-input').addEventListener('keydown', (e) => {
         if (e.key !== 'Enter') return;
         e.preventDefault();
