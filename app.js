@@ -57,7 +57,6 @@ function bindStaticEvents() {
     const menuToggleBtn = document.getElementById('menu-toggle-btn');
     const settingsMenu = document.getElementById('settings-menu');
     menuToggleBtn.innerHTML = ICON_HAMBURGER;
-    document.getElementById('menu-project-select').querySelector('.settings-menu-icon').innerHTML = ICON_FOLDER;
 
     menuToggleBtn.addEventListener('click', () => {
         const isOpen = settingsMenu.classList.toggle('open');
@@ -130,7 +129,6 @@ function showPanel(id) {
 /* =========================================================
    아이콘 (인라인 SVG)
    ========================================================= */
-const ICON_FOLDER = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>';
 const ICON_ARROW_LEFT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>';
 const ICON_HAMBURGER = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>';
 
@@ -260,7 +258,6 @@ async function enterProjectScreen() {
    ========================================================= */
 async function openProject(fileId, title) {
     showScreen('viewer-screen');
-    document.getElementById('settings-menu-title').textContent = title;
     document.getElementById('search-input').value = '';
     showPanel('results-panel');
     setViewerNav('results');
