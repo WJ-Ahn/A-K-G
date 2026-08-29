@@ -44,19 +44,11 @@ function bindStaticEvents() {
     document.getElementById('theme-toggle-1').addEventListener('click', toggleTheme);
     document.getElementById('theme-toggle-2').addEventListener('click', toggleTheme);
 
-    document.getElementById('back-to-projects').addEventListener('click', () => {
-        showScreen('project-screen');
-    });
-
     let searchDebounceTimer = null;
     document.getElementById('search-input').addEventListener('input', (e) => {
         clearTimeout(searchDebounceTimer);
         const value = e.target.value;
         searchDebounceTimer = setTimeout(() => runSearch(value), 150);
-    });
-
-    document.getElementById('detail-back').addEventListener('click', () => {
-        goBackFromDetail();
     });
 
     // 엣지 스와이프로 뒤로가기 (상세 화면에서만 동작)
@@ -103,6 +95,27 @@ function showScreen(id) {
 function showPanel(id) {
     document.querySelectorAll('.panel').forEach(el => el.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+}
+
+/* =========================================================
+   뷰어 화면 하단 바 좌측 아이콘 전환
+   - 검색 결과 화면: 폴더 아이콘 → 프로젝트 목록으로
+   - 상세 화면: 화살표 아이콘 → 검색 결과로
+   ========================================================= */
+const ICON_FOLDER = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>';
+const ICON_ARROW_LEFT = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>';
+
+function setViewerNav(mode) {
+    const btn = document.getElementById('viewer-primary-action');
+    if (mode === 'detail') {
+        btn.innerHTML = ICON_ARROW_LEFT;
+        btn.setAttribute('aria-label', '검색 결과로');
+        btn.onclick = goBackFromDetail;
+    } else {
+        btn.innerHTML = ICON_FOLDER;
+        btn.setAttribute('aria-label', '프로젝트 목록으로');
+        btn.onclick = () => showScreen('project-screen');
+    }
 }
 
 /* =========================================================
@@ -219,6 +232,7 @@ async function openProject(fileId, title) {
     document.getElementById('viewer-project-title').textContent = title;
     document.getElementById('search-input').value = '';
     showPanel('results-panel');
+    setViewerNav('results');
     document.getElementById('results-list').innerHTML = '<div class="loading-text">불러오는 중…</div>';
 
     try {
@@ -360,6 +374,7 @@ function renderDetail(nodeId) {
     })));
 
     showPanel('detail-panel');
+    setViewerNav('detail');
     document.getElementById('detail-panel').scrollTop = 0;
 }
 
@@ -372,9 +387,10 @@ function goBackFromDetail() {
     detailStack.pop(); // 현재 보고 있는 노드 제거
     if (detailStack.length > 0) {
         const prevId = detailStack[detailStack.length - 1];
-        renderDetail(prevId);
+        renderDetail(prevId); // renderDetail 내부에서 setViewerNav('detail') 호출됨
     } else {
         showPanel('results-panel');
+        setViewerNav('results');
     }
 }
 

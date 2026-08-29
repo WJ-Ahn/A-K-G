@@ -23,23 +23,18 @@
 
   <!-- ===================== 프로젝트 선택 화면 ===================== -->
   <div id="project-screen" class="screen">
-    <header class="top-bar">
-      <div class="top-bar-title">프로젝트 선택</div>
-      <button id="theme-toggle-1" class="icon-btn" title="테마 전환">◐</button>
-    </header>
     <div id="project-list" class="project-list">
       <div class="loading-text">불러오는 중…</div>
     </div>
+    <footer class="bottom-bar">
+      <span class="icon-btn" aria-hidden="true" style="visibility:hidden;"></span>
+      <div class="bottom-bar-title">프로젝트 선택</div>
+      <button id="theme-toggle-1" class="icon-btn" title="테마 전환">◐</button>
+    </footer>
   </div>
 
   <!-- ===================== 뷰어 화면 (검색 + 결과 + 상세) ===================== -->
   <div id="viewer-screen" class="screen">
-    <header class="top-bar">
-      <button id="back-to-projects" class="icon-btn" title="프로젝트 목록으로">←</button>
-      <div class="top-bar-title" id="viewer-project-title">프로젝트</div>
-      <button id="theme-toggle-2" class="icon-btn" title="테마 전환">◐</button>
-    </header>
-
     <div class="search-bar-wrap">
       <input id="search-input" class="search-input" type="text" placeholder="노드명 또는 메모 내용 검색" autocomplete="off" />
     </div>
@@ -53,7 +48,6 @@
 
     <!-- 상세 화면 -->
     <div id="detail-panel" class="panel">
-      <button id="detail-back" class="back-link">← 검색 결과로</button>
       <div class="detail-body">
         <h1 id="detail-title" class="detail-title"></h1>
         <div id="detail-description" class="detail-description"></div>
@@ -69,6 +63,12 @@
         </div>
       </div>
     </div>
+
+    <footer class="bottom-bar">
+      <button id="viewer-primary-action" class="icon-btn" aria-label="뒤로가기"></button>
+      <div class="bottom-bar-title" id="viewer-project-title">프로젝트</div>
+      <button id="theme-toggle-2" class="icon-btn" title="테마 전환">◐</button>
+    </footer>
   </div>
 
   <script src="app.js"></script>
