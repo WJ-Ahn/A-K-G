@@ -37,9 +37,9 @@ window.addEventListener('load', () => {
 
 function bindStaticEvents() {
     document.getElementById('login-btn').addEventListener('click', () => {
-        showLoginError('');
-        tokenClient.requestAccessToken({ prompt: 'consent' });
-    });
+    showLoginError('');
+    tokenClient.requestAccessToken({ prompt: '' });
+});
 
     document.getElementById('theme-toggle-1').addEventListener('click', toggleTheme);
 
